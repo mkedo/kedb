@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mike
- * Date: 0027 27.07.2018
- * Time: 1:11
- */
-
 namespace Kedb\Spi\Fake;
 
 

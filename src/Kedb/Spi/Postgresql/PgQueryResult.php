@@ -47,6 +47,12 @@ class PgQueryResult implements QueryResult
         if ($row === false) {
             $this->row = null;
         } else {
+            for($i = 0; $i < pg_num_fields($this->result); ++$i) {
+                if (pg_field_type($this->result, $i) === "bytea") {
+                    $fieldName = pg_field_name($this->result, $i);
+                    $row[$fieldName] = pg_unescape_bytea($row[$fieldName]);
+                }
+            }
             $this->row = $row;
         }
     }

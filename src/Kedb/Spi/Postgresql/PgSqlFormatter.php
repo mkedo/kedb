@@ -33,6 +33,11 @@ class PgSqlFormatter implements SqlFormatter
             $result = $value ? 'true' : 'false';
         } else if (is_string($value)) {
             $result = "'" . pg_escape_string($this->connection, $value) . "'";
+        } else if (is_resource($value)) {
+            if (get_resource_type($value) !== 'stream') {
+                throw new KedbException("Only stream resources are supported. " . get_resource_type($value) . " given");
+            }
+            return $this->quoteBinary(stream_get_contents($value));
         } else {
             throw new KedbException("Unsupported literal type: " . gettype($value));
         }
@@ -56,5 +61,13 @@ class PgSqlFormatter implements SqlFormatter
         } else {
             return $quoteIdent($ident);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function quoteBinary($binary)
+    {
+        return "'" . pg_escape_bytea($this->connection, $binary) . "'::bytea";
     }
 }
