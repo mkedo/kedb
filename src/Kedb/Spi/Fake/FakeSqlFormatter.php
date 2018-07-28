@@ -1,9 +1,9 @@
 <?php
 namespace Kedb\Spi\Fake;
 
+
 class FakeSqlFormatter implements \Kedb\SqlFormatter
 {
-
     /**
      * @inheritDoc
      */
@@ -17,6 +17,11 @@ class FakeSqlFormatter implements \Kedb\SqlFormatter
             $result = $value ? 'true' : 'false';
         } else if (is_string($value)) {
             $result = "'" . str_replace("'", "''", $value) . "'";
+        } else if (is_resource($value)) {
+            if (get_resource_type($value) !== 'stream') {
+                throw new KedbException("Only stream resources are supported. " . get_resource_type($value) . " given");
+            }
+            return $this->quoteBinary(stream_get_contents($value));
         } else {
             throw new KedbException("Unsupported literal type: " . gettype($value));
         }
@@ -41,5 +46,26 @@ class FakeSqlFormatter implements \Kedb\SqlFormatter
         } else {
             return $quoteIdent($ident);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function quoteBinary($binary)
+    {
+        if (strlen($binary) === 0) {
+            $hexstr = '';
+        } else {
+            $hexstr = '\\x' . implode(
+                '',
+                array_map(
+                    function ($chr) {
+                        return str_pad(dechex(ord($chr)), 2, '0', STR_PAD_LEFT);
+                    },
+                    str_split($binary)
+                )
+            );
+        }
+        return sprintf("'%s'::bytea", $hexstr);
     }
 }

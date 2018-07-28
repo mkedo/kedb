@@ -18,4 +18,11 @@ interface SqlFormatter
      * @return string
      */
     public function quoteIdent($ident);
+
+    /**
+     * Return the given binary suitably quoted to be used as binary data in an SQL statement string.
+     * @param string $binary
+     * @return string
+     */
+    public function quoteBinary($binary);
 }

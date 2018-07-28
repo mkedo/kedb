@@ -56,4 +56,45 @@ class FakeSqlFormatterTest extends \PHPUnit_Framework_TestCase
             [false, 'false'],
         ];
     }
+
+    /**
+     * @dataProvider binaryProvider
+     * @param string $binary
+     * @param string $expected
+     */
+    public function testBinary($binary, $expected)
+    {
+        $formatter = new FakeSqlFormatter();
+
+        $this->assertEquals($expected, $formatter->quoteBinary($binary));
+    }
+
+    public function binaryProvider()
+    {
+        return [
+            ["\x01\x02", sprintf("'%s'::bytea", '\\x0102')],
+            ["", "''::bytea"],
+        ];
+    }
+
+    /**
+     * @dataProvider binaryProvider
+     * @param string $binary
+     * @param string $expected
+     */
+    public function testResource($binary, $expected)
+    {
+        $formatter = new FakeSqlFormatter();
+
+        $fp = fopen("php://memory", "rwb");
+        $this->assertTrue(is_resource($fp));
+        fwrite($fp, $binary);
+        fseek($fp, 0);
+
+        try {
+            $this->assertEquals($expected, $formatter->quoteLiteral($fp));
+        } finally {
+            fclose($fp);
+        }
+    }
 }
