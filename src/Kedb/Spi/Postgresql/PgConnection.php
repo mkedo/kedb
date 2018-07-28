@@ -1,9 +1,9 @@
 <?php
-
 namespace Kedb\Spi\Postgresql;
 
 use Kedb\Connection;
 use Kedb\KedbException;
+use Kedb\Spi\Common\CmQueryResult;
 use Kedb\SqlFormatter;
 
 class PgConnection implements Connection
@@ -35,7 +35,6 @@ class PgConnection implements Connection
         }
     }
 
-
     public function connect()
     {
         $connection = @pg_connect($this->dsn, PGSQL_CONNECT_FORCE_NEW);
@@ -58,7 +57,7 @@ class PgConnection implements Connection
         if (!$result) {
             throw new KedbException(pg_last_error($this->connection));
         }
-        return new PgQueryResult($result);
+        return new CmQueryResult(new PgQueryResult($this, $result));
     }
 
     public function transaction()

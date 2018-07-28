@@ -1,10 +1,15 @@
 <?php
 namespace Kedb\Spi\Postgresql;
 
-use Kedb\QueryResult;
+use Kedb\Spi\SpiQueryResult;
+use Kedb\Spi\SpiRows;
 
-class PgQueryResult implements QueryResult
+class PgQueryResult implements SpiQueryResult
 {
+    /**
+     * @var PgConnection
+     */
+    private $connection;
 
     /**
      * @var resource
@@ -12,92 +17,44 @@ class PgQueryResult implements QueryResult
     private $result;
 
     /**
-     * @var array
+     * @var PgRows
      */
-    private $row;
+    private $rowsIterator;
 
     /**
-     * @var int
-     */
-    private $key;
-
-    /**
+     * @param $connection
      * @param resource $result
      */
-    public function __construct($result)
+    public function __construct($connection, $result)
     {
-        if (!is_resource($result)) {
-            throw new \InvalidArgumentException("\query result must be valid resource");
-        }
+        $this->connection = $connection;
         $this->result = $result;
+        $this->rowsIterator = new PgRows($this->result);
     }
 
     /**
      * @inheritDoc
      */
-    public function count()
+    public function rows()
     {
-        return pg_num_rows($this->result);
+        return $this->rowsIterator;
     }
 
-    private function fetchRow()
+    /**
+     * @inheritDoc
+     */
+    public function ar()
     {
-        $this->key = $this->key === null ? 0 : ++$this->key;
-        $row = pg_fetch_assoc($this->result);
-        if ($row === false) {
-            $this->row = null;
-        } else {
-            for($i = 0; $i < pg_num_fields($this->result); ++$i) {
-                if (pg_field_type($this->result, $i) === "bytea") {
-                    $fieldName = pg_field_name($this->result, $i);
-                    $row[$fieldName] = pg_unescape_bytea($row[$fieldName]);
-                }
-            }
-            $this->row = $row;
+        return pg_affected_rows($this->result);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLastInsertId()
+    {
+        foreach ($this->connection->plainQuery("SELECT lastval()")->rows() as $row) {
+            return $row[0];
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function current()
-    {
-        return $this->row;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function next()
-    {
-        $this->fetchRow();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function key()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function valid()
-    {
-        return $this->row !== null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function rewind()
-    {
-        if ($this->row !== null) {
-            pg_result_seek($this->result, 0);
-            $this->key = null;
-        }
-        $this->fetchRow();
     }
 }
