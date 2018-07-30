@@ -52,9 +52,15 @@ class PgRows implements SpiRows
             $this->row = null;
         } else {
             for($i = 0; $i < pg_num_fields($this->result); ++$i) {
-                if (pg_field_type($this->result, $i) === "bytea") {
-                    $fieldName = pg_field_name($this->result, $i);
+                $fieldType = pg_field_type($this->result, $i);
+                $fieldName = pg_field_name($this->result, $i);
+                if (is_null($row[$fieldName])) {
+                    continue;
+                }
+                if ($fieldType === "bytea") {
                     $row[$fieldName] = pg_unescape_bytea($row[$fieldName]);
+                } else if ($fieldType === "bool") {
+                    $row[$fieldName] = $row[$fieldName] === "t" ? true : false;
                 }
             }
             $this->row = $row;
