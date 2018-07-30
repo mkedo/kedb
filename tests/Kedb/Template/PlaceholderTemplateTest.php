@@ -22,7 +22,6 @@ class PlaceholderTemplateTest extends \PHPUnit_Framework_TestCase
 
     public function provider()
     {
-        $noType = null;
         $identType = 't';
         return [
             ['', [], '', []],

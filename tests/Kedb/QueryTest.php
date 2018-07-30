@@ -47,6 +47,14 @@ class QueryTest extends \PHPUnit_Framework_TestCase
                     'float' => 1.23
                 ],
                 "SELECT NULL, 'str', 123, 1.23"
+            ],
+            [
+                "SELECT ?t:id FROM (?:subquery) t",
+                [
+                    'id' => 'id',
+                    'subquery' => new Query("SELECT ?t FROM ?t", ['id', 'users'])
+                ],
+                'SELECT "id" FROM (SELECT "id" FROM "users") t',
             ]
         ];
     }

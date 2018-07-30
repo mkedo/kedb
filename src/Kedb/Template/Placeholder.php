@@ -15,9 +15,9 @@ class Placeholder
 
     /**
      * @param int|string $name
-     * @param null|string $type
+     * @param string $type
      */
-    public function __construct($name, $type = null)
+    public function __construct($name, $type = '')
     {
         $this->name = $name;
         $this->type = $type;

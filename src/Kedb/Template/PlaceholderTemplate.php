@@ -106,7 +106,7 @@ class PlaceholderTemplate
                     $templateMap[] = [
                         'name' => $phName,
                         'idx' => count($templateVector) - 1,
-                        'type' => !empty($phType) ? $phType : null
+                        'type' => !empty($phType) ? $phType : ''
                     ];
                 }
                 $lastPhOffset = $offset + $phLen;
