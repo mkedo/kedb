@@ -2,6 +2,7 @@
 namespace Kedb;
 
 
+use Kedb\Spi\Common\CmSqlFormatter;
 use Kedb\Spi\Fake\FakeSqlFormatter;
 
 class QueryTest extends \PHPUnit_Framework_TestCase
@@ -15,7 +16,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormat($sql, $params, $expected)
     {
-        $formatter = new FakeSqlFormatter();
+        $formatter = new CmSqlFormatter(new FakeSqlFormatter());
         $query = new Query($sql, $params);
 
         $rawSql = $query->format($formatter);
@@ -57,10 +58,5 @@ class QueryTest extends \PHPUnit_Framework_TestCase
                 'SELECT "id" FROM (SELECT "id" FROM "users") t',
             ]
         ];
-    }
-
-    public function testExec()
-    {
-
     }
 }

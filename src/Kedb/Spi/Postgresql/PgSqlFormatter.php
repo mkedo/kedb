@@ -1,11 +1,9 @@
 <?php
 namespace Kedb\Spi\Postgresql;
 
+use Kedb\Spi\SpiSqlFormatter;
 
-use Kedb\KedbException;
-use Kedb\SqlFormatter;
-
-class PgSqlFormatter implements SqlFormatter
+class PgSqlFormatter implements SpiSqlFormatter
 {
     /**
      * @var resource
@@ -23,37 +21,12 @@ class PgSqlFormatter implements SqlFormatter
     /**
      * @inheritDoc
      */
-    public function quoteLiteral($value)
+    public function formatIdent($ident)
     {
-        if (is_null($value)) {
-            $result = "NULL";
-        } else if (is_int($value) || is_float($value)) {
-            $result = (string)$value;
-        } else if (is_bool($value)) {
-            $result = $value ? 'true' : 'false';
-        } else if (is_string($value)) {
-            $result = "'" . pg_escape_string($this->connection, $value) . "'";
-        } else if (is_resource($value)) {
-            if (get_resource_type($value) !== 'stream') {
-                throw new KedbException("Only stream resources are supported. " . get_resource_type($value) . " given");
-            }
-            return $this->quoteBinary(stream_get_contents($value));
-        } else {
-            throw new KedbException("Unsupported literal type: " . gettype($value));
-        }
-        return $result;
-    }
+        $connection = $this->connection;
 
-    /**
-     * @inheritDoc
-     */
-    public function quoteIdent($ident)
-    {
-        if (is_null($ident)) {
-            return "NULL";
-        }
-        $quoteIdent = function ($value) {
-            return '"' . str_replace('"', '""', $value) . '"';
+        $quoteIdent = function ($value) use (&$connection) {
+            return '"' . pg_escape_identifier($connection, $value) . '"';
         };
 
         if (is_array($ident)) {
@@ -66,8 +39,56 @@ class PgSqlFormatter implements SqlFormatter
     /**
      * @inheritDoc
      */
-    public function quoteBinary($binary)
+    public function formatNull()
     {
-        return "'" . pg_escape_bytea($this->connection, $binary) . "'::bytea";
+        return "NULL";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function formatInt($value)
+    {
+        return (string)$value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function formatFloat($value)
+    {
+        return (string)$value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function formatBool($value)
+    {
+        return $value ? 'true' : 'false';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function formatString($value)
+    {
+        return "'" . pg_escape_string($this->connection, $value) . "'";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function formatDefault()
+    {
+        return "DEFAULT";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function formatBinary($value)
+    {
+        return "'" . pg_escape_bytea($this->connection, $value) . "'::bytea";
     }
 }

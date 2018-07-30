@@ -1,6 +1,7 @@
 <?php
 namespace Kedb\Spi\Fake;
 
+use Kedb\Spi\Common\CmSqlFormatter;
 
 class FakeSqlFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +13,7 @@ class FakeSqlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testQuoteIdent($ident, $expected)
     {
-        $formatter = new FakeSqlFormatter();
+        $formatter = new CmSqlFormatter(new FakeSqlFormatter());
         $this->assertEquals($expected, $formatter->quoteIdent($ident));
     }
 
@@ -32,7 +33,7 @@ class FakeSqlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testQuoteLiteral($literal, $expected)
     {
-        $formatter = new FakeSqlFormatter();
+        $formatter = new CmSqlFormatter(new FakeSqlFormatter());
         $this->assertEquals($expected, $formatter->quoteLiteral($literal));
     }
 
@@ -57,7 +58,7 @@ class FakeSqlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinary($binary, $expected)
     {
-        $formatter = new FakeSqlFormatter();
+        $formatter = new CmSqlFormatter(new FakeSqlFormatter());
 
         $this->assertEquals($expected, $formatter->quoteBinary($binary));
     }
@@ -77,7 +78,7 @@ class FakeSqlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testResource($binary, $expected)
     {
-        $formatter = new FakeSqlFormatter();
+        $formatter = new CmSqlFormatter(new FakeSqlFormatter());
 
         $fp = fopen("php://memory", "rwb");
         $this->assertTrue(is_resource($fp));

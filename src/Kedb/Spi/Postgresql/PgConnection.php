@@ -4,6 +4,7 @@ namespace Kedb\Spi\Postgresql;
 use Kedb\Connection;
 use Kedb\KedbException;
 use Kedb\Spi\Common\CmQueryResult;
+use Kedb\Spi\Common\CmSqlFormatter;
 use Kedb\SqlFormatter;
 
 class PgConnection implements Connection
@@ -44,7 +45,7 @@ class PgConnection implements Connection
         }
         pg_set_error_verbosity($connection, PGSQL_ERRORS_VERBOSE);
         $this->connection = $connection;
-        $this->formatter = new PgSqlFormatter($connection);
+        $this->formatter = new CmSqlFormatter(new PgSqlFormatter($connection));
     }
 
     /**
@@ -62,9 +63,9 @@ class PgConnection implements Connection
 
     public function transaction()
     {
+        $this->checkConnection();
         // TODO: Implement transaction() method.
         throw new \Exception("Not implemented");
-        $this->checkConnection();
     }
 
     public function close()
