@@ -2,7 +2,6 @@
 namespace Kedb\Spi\Postgresql;
 
 use Kedb\Spi\SpiQueryResult;
-use Kedb\Spi\SpiRows;
 
 class PgQueryResult implements SpiQueryResult
 {
@@ -53,8 +52,9 @@ class PgQueryResult implements SpiQueryResult
      */
     public function getLastInsertId()
     {
-        foreach ($this->connection->plainQuery("SELECT lastval()")->rows() as $row) {
+        foreach ($this->connection->plainQuery("SELECT lastval()")->assoc() as $row) {
             return $row[0];
         }
+        return null;
     }
 }

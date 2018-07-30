@@ -1,6 +1,7 @@
 <?php
 namespace Kedb\Spi\Fake;
 
+use Kedb\KedbException;
 
 class FakeSqlFormatter implements \Kedb\SqlFormatter
 {

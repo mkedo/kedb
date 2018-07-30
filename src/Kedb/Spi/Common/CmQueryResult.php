@@ -45,6 +45,7 @@ class CmQueryResult implements QueryResult
         foreach ($this->queryResult->rows() as $row) {
             return $row;
         }
+        return null;
     }
 
     /**
