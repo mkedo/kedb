@@ -37,6 +37,7 @@ class QueryTemplate
     /**
      * @param SqlFormatter $formatter
      * @param array $params
+     * @return string
      * @throws KedbException
      */
     public function fetch(SqlFormatter $formatter, array $params)

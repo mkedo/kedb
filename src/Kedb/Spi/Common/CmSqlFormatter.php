@@ -1,6 +1,7 @@
 <?php
 namespace Kedb\Spi\Common;
 
+use Kedb\KedbException;
 use Kedb\Spi\SpiSqlFormatter;
 use Kedb\SqlFormatter;
 

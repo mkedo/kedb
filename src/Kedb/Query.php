@@ -13,12 +13,7 @@ class Query implements Formattable
      * @var array
      */
     private $params;
-
-    /**
-     * @var PhProcessor
-     */
-    private $phProcessor;
-
+    
     public function __construct($sql, array $params = [])
     {
         $this->template = new QueryTemplate($sql);
