@@ -1,7 +1,7 @@
 <?php
 namespace Kedb\Spi;
 
-interface SpiQueryResult
+interface SpiResult
 {
     /**
      * @return SpiRows

@@ -4,21 +4,21 @@ namespace Kedb\Spi\Common;
 
 
 use Kedb\QueryResult;
-use Kedb\Spi\SpiQueryResult;
+use Kedb\Spi\SpiResult;
 
 class CmQueryResult implements QueryResult
 {
     /**
-     * @var SpiQueryResult
+     * @var SpiResult
      */
-    private $queryResult;
+    private $spiResult;
 
     /**
-     * @param SpiQueryResult $queryResult
+     * @param SpiResult $spiResult
      */
-    public function __construct(SpiQueryResult $queryResult)
+    public function __construct(SpiResult $spiResult)
     {
-        $this->queryResult = $queryResult;
+        $this->spiResult = $spiResult;
     }
 
     /**
@@ -27,7 +27,7 @@ class CmQueryResult implements QueryResult
     public function assoc($column = null)
     {
         $rows = [];
-        foreach ($this->queryResult->rows() as $row) {
+        foreach ($this->spiResult->rows() as $row) {
             if ($column === null) {
                 $rows [] = $row;
             } else {
@@ -42,7 +42,7 @@ class CmQueryResult implements QueryResult
      */
     public function row()
     {
-        foreach ($this->queryResult->rows() as $row) {
+        foreach ($this->spiResult->rows() as $row) {
             return $row;
         }
         return null;
@@ -53,7 +53,7 @@ class CmQueryResult implements QueryResult
      */
     public function el($column = null)
     {
-        foreach ($this->queryResult->rows() as $row) {
+        foreach ($this->spiResult->rows() as $row) {
             return $column === null ? current($row) : $row[$column];
         }
         return null;
@@ -65,7 +65,7 @@ class CmQueryResult implements QueryResult
     public function col($column = null)
     {
         $rows = [];
-        foreach ($this->queryResult->rows() as $row) {
+        foreach ($this->spiResult->rows() as $row) {
             $rows [] = $column === null ? current($row) : $row[$column];
         }
         return $rows;
@@ -76,7 +76,7 @@ class CmQueryResult implements QueryResult
      */
     public function ar()
     {
-        return $this->queryResult->ar();
+        return $this->spiResult->ar();
     }
 
     /**
@@ -84,7 +84,7 @@ class CmQueryResult implements QueryResult
      */
     public function getLastInsertId()
     {
-        return $this->queryResult->getLastInsertId();
+        return $this->spiResult->getLastInsertId();
     }
 
     /**
@@ -92,7 +92,6 @@ class CmQueryResult implements QueryResult
      */
     public function getNumRows()
     {
-        return count($this->queryResult->rows());
+        return count($this->spiResult->rows());
     }
-
 }

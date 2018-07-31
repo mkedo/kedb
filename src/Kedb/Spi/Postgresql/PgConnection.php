@@ -58,7 +58,7 @@ class PgConnection implements Connection
         if (!$result) {
             throw new KedbException(pg_last_error($this->connection));
         }
-        return new CmQueryResult(new PgQueryResult($this, $result));
+        return new CmQueryResult(new PgResult($this, $result));
     }
 
     public function transaction()

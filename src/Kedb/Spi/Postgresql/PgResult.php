@@ -1,9 +1,9 @@
 <?php
 namespace Kedb\Spi\Postgresql;
 
-use Kedb\Spi\SpiQueryResult;
+use Kedb\Spi\SpiResult;
 
-class PgQueryResult implements SpiQueryResult
+class PgResult implements SpiResult
 {
     /**
      * @var PgConnection
