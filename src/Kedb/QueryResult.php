@@ -40,4 +40,11 @@ interface QueryResult
      * @return mixed
      */
     public function getLastInsertId();
+
+    /**
+     * Returns the number of rows in a result.
+     *
+     * @return int
+     */
+    public function getNumRows();
 }

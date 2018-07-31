@@ -26,7 +26,7 @@ class PgSqlFormatter implements SpiSqlFormatter
         $connection = $this->connection;
 
         $quoteIdent = function ($value) use (&$connection) {
-            return '"' . pg_escape_identifier($connection, $value) . '"';
+            return pg_escape_identifier($connection, $value);
         };
 
         if (is_array($ident)) {

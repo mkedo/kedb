@@ -1,0 +1,4 @@
+<?php
+return [
+    // "pgsql" => "dbname=test port=5432 user=postgres password=''",
+];

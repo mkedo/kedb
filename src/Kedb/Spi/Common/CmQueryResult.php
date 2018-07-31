@@ -86,4 +86,13 @@ class CmQueryResult implements QueryResult
     {
         return $this->queryResult->getLastInsertId();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNumRows()
+    {
+        return count($this->queryResult->rows());
+    }
+
 }

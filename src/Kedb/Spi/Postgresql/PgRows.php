@@ -21,6 +21,11 @@ class PgRows implements SpiRows
     private $key;
 
     /**
+     * @var bool
+     */
+    private $fetchedAny;
+
+    /**
      * @param resource $result
      */
     public function __construct($result)
@@ -46,6 +51,7 @@ class PgRows implements SpiRows
 
     private function fetchRow()
     {
+        $this->fetchedAny = true;
         $this->key = $this->key === null ? 0 : ++$this->key;
         $row = pg_fetch_assoc($this->result);
         if ($row === false) {
@@ -104,9 +110,9 @@ class PgRows implements SpiRows
      */
     public function rewind()
     {
-        if ($this->row !== null) {
+        if ($this->fetchedAny) {
             pg_result_seek($this->result, 0);
-            $this->key = null;
+            $this->fetchedAny = false;
         }
         $this->fetchRow();
     }
