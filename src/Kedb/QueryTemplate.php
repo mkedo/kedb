@@ -1,8 +1,11 @@
 <?php
 namespace Kedb;
 
+use Kedb\PhFormatters\Binary;
 use Kedb\PhFormatters\Ident;
+use Kedb\PhFormatters\IdentList;
 use Kedb\PhFormatters\Literal;
+use Kedb\PhFormatters\Raw;
 use Kedb\Template\Placeholder;
 use Kedb\Template\PlaceholderTemplate;
 
@@ -29,6 +32,9 @@ class QueryTemplate
             [
                 '' => new Literal(),
                 't' => new Ident(),
+                'c' => new IdentList(),
+                'q' => new Raw(),
+                'b' => new Binary(),
             ],
             $phTypes
         );

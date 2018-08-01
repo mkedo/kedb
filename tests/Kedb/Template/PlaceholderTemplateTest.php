@@ -32,6 +32,8 @@ class PlaceholderTemplateTest extends \PHPUnit_Framework_TestCase
             ['\?', [], '?', []],
             ['\?t', [], '?t', []],
             ['\?t:named', [], '?t:named', []], // 7
+            ['?t:name1:name2', ['name1'=> 'a'], 'a:name2', [new Placeholder('name1', $identType)]],
+            [':name1', [], ':name1', []],
 
             [
                 'SELECT "no" FROM "placeholders"',
@@ -113,6 +115,13 @@ class PlaceholderTemplateTest extends \PHPUnit_Framework_TestCase
                     new Placeholder('p1'),
                     new Placeholder('p2')
                 ]
+            ],
+            // custom placeholder type
+            [
+                '?custom:name',
+                ['name' => 'a'],
+                'a',
+                [new Placeholder('name', 'custom')]
             ]
         ];
     }

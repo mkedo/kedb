@@ -77,7 +77,7 @@ class PlaceholderTemplate
     private function compile()
     {
         $template = $this->template;
-        $regex = '/(\\\?)\?(t?)(\:[a-zA-Z-_]+[a-zA-Z-_0-9]*)*/';
+        $regex = '/(\\\?)\?([a-zA-Z-_]+[a-zA-Z-_0-9]*)?(\:[a-zA-Z-_]+[a-zA-Z-_0-9]*)?/';
         if ($matchesCount = preg_match_all($regex, $template, $matches, PREG_OFFSET_CAPTURE)) {
             $templateVector = [];
             $templateMap = [];
@@ -98,7 +98,9 @@ class PlaceholderTemplate
                 if (!empty($backslash)) {
                     $templateVector []= substr($match, 1);
                 } else {
-                    $phType = $matches[2][$i][0];
+                    $phType = isset($matches[2][$i][0]) && is_array($matches[2][$i])
+                        ? $matches[2][$i][0]
+                        : '';
                     $phName = isset($matches[3][$i][0])
                         ? substr($matches[3][$i][0], 1)
                         : $id++;
@@ -106,7 +108,7 @@ class PlaceholderTemplate
                     $templateMap[] = [
                         'name' => $phName,
                         'idx' => count($templateVector) - 1,
-                        'type' => !empty($phType) ? $phType : ''
+                        'type' => $phType
                     ];
                 }
                 $lastPhOffset = $offset + $phLen;
