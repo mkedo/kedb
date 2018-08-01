@@ -5,6 +5,7 @@ use Kedb\Connection;
 use Kedb\KedbException;
 use Kedb\Spi\Common\CmQueryResult;
 use Kedb\Spi\Common\CmSqlFormatter;
+use Kedb\Spi\Common\CmTransaction;
 use Kedb\SqlFormatter;
 
 class PgConnection implements Connection
@@ -25,6 +26,11 @@ class PgConnection implements Connection
     private $formatter;
 
     /**
+     * @var CmTransaction
+     */
+    private $txn;
+
+    /**
      * @param string $dsn
      * @throws KedbException
      */
@@ -38,6 +44,9 @@ class PgConnection implements Connection
 
     public function connect()
     {
+        if ($this->connection) {
+            return;
+        }
         $connection = @pg_connect($this->dsn, PGSQL_CONNECT_FORCE_NEW);
         if (!$connection) {
             $errorData = error_get_last();
@@ -46,6 +55,7 @@ class PgConnection implements Connection
         pg_set_error_verbosity($connection, PGSQL_ERRORS_VERBOSE);
         $this->connection = $connection;
         $this->formatter = new CmSqlFormatter(new PgSqlFormatter($connection));
+        $this->txn = new CmTransaction($this);
     }
 
     /**
@@ -64,8 +74,7 @@ class PgConnection implements Connection
     public function transaction()
     {
         $this->checkConnection();
-        // TODO: Implement transaction() method.
-        throw new \Exception("Not implemented");
+        return $this->txn;
     }
 
     public function close()
@@ -74,6 +83,7 @@ class PgConnection implements Connection
             @pg_close($this->connection);
             $this->connection = null;
             $this->formatter = null;
+            $this->txn = null;
         }
     }
 

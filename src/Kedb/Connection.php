@@ -10,6 +10,9 @@ interface Connection
      */
     public function plainQuery($sql);
 
+    /**
+     * @return Transaction
+     */
     public function transaction();
 
     public function close();

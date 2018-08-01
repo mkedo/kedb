@@ -3,6 +3,8 @@ namespace Kedb\Spi\Postgresql;
 
 use Kedb\Connection;
 use Kedb\Query;
+use Kedb\Transaction;
+use Kedb\TransactionException;
 
 class PostgresqlTest extends \PHPUnit_Framework_TestCase
 {
@@ -125,5 +127,88 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase
         // el
         $this->assertEquals("one", $result->el("name"));
         $this->assertEquals(1, $result->el());
+    }
+
+    public function testTransaction()
+    {
+        $txn = $this->pg->transaction();
+        $conn = $this->pg;
+
+        $this->assertTrue(! $txn->isInTransaction());
+        $txn->begin();
+        $this->assertTrue($txn->isInTransaction());
+        $txn->commit();
+        $this->assertTrue(! $txn->isInTransaction());
+
+        $tableName = "_pg_driver_test_";
+        $newTableQuery = new Query("CREATE TEMP TABLE ?t (?t integer)", [$tableName, "id"]);
+        $insertQuery = new Query("INSERT INTO ?t VALUES (?)", [$tableName, 123]);
+        $countQuery = new Query("SELECT COUNT(*) FROM ?t", [$tableName]);
+
+        $newTableQuery->exec($conn);
+
+
+        $this->assertEquals(0, $countQuery->exec($conn)->el());
+
+        // begin 1
+        $txn->begin();
+        $insertQuery->exec($conn);
+        $this->assertTrue($txn->isInTransaction());
+        $this->assertEquals(1, $countQuery->exec($conn)->el());
+
+            // begin 2
+            $txn->begin();
+            $this->assertTrue($txn->isInTransaction());
+            $insertQuery->exec($conn);
+            $this->assertEquals(2, $countQuery->exec($conn)->el());
+                // begin 3
+                $txn->begin();
+                $this->assertTrue($txn->isInTransaction());
+                $insertQuery->exec($conn);
+                $this->assertEquals(3, $countQuery->exec($conn)->el());
+
+                // end 3
+                $txn->commit();
+                $this->assertTrue($txn->isInTransaction());
+                $this->assertEquals(3, $countQuery->exec($conn)->el());
+
+            // end 2
+            $txn->rollback();
+            $this->assertTrue($txn->isInTransaction());
+            $this->assertEquals(1, $countQuery->exec($conn)->el());
+
+        // end 1
+        $txn->rollback();
+        $this->assertTrue(! $txn->isInTransaction());
+        $this->assertEquals(0, $countQuery->exec($conn)->el());
+
+        try {
+            $txn->commit();
+            $this->fail("Should not execute since there is no transaction in progress");
+        } catch (TransactionException $e) {}
+
+        try {
+            $txn->rollback();
+            $this->fail("Should not execute since there is no transaction in progress");
+        } catch (TransactionException $e) {}
+
+    }
+
+    public function testTxnLevel()
+    {
+        $txn = $this->pg->transaction();
+
+        $txn->begin(Transaction::REPEATABLE_READ);
+        try {
+            $txn->begin(Transaction::SERIALIZABLE);
+            $this->fail("Should not raise isolation level");
+        } catch (TransactionException $e) {}
+
+        try {
+            $txn->begin(12345678);
+            $this->fail("Should not start with unknown isolation level");
+        } catch (TransactionException $e) {}
+
+        $txn->rollback();
     }
 }
