@@ -1,0 +1,25 @@
+language: php
+
+php:
+  - 5.6
+
+services:
+  - postgresql
+
+# If before_install, install or before_script returns a non-zero exit code,
+# the build is errored and stops immediately.
+install:
+  - composer self-update
+  - composer install --no-interaction
+  - composer require php-coveralls/php-coveralls --no-interaction
+
+before_script:
+  - cp ./tests/db.params.travis.php ./tests/db.params.php
+  - psql -c 'create database travis_ci_test;' -U postgres
+
+# If script returns a non-zero exit code, the build is failed,
+# but continues to run before being marked as failed.
+script:
+  - ./vendor/bin/phpunit --coverage-clover clover.xml
+  - ./vendor/bin/php-coveralls -v --coverage_clover clover.xml --json_path coveralls-upload.json
+  - composer run cs
