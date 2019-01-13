@@ -1,5 +1,7 @@
 {
   "name": "mkedo/kedb",
+  "license": "MIT",
+  "description": "A database library with consistent interface, focused on extensibility and easier query decomposition",
   "require": {
     "php": ">=5.5"
   },
