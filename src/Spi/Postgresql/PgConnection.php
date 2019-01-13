@@ -50,7 +50,7 @@ class PgConnection implements Connection
         $connection = @pg_connect($this->dsn, PGSQL_CONNECT_FORCE_NEW);
         if (!$connection) {
             $errorData = error_get_last();
-            throw new KedbException($errorData);
+            throw new KedbException($errorData['message']);
         }
         pg_set_error_verbosity($connection, PGSQL_ERRORS_VERBOSE);
         $this->connection = $connection;
