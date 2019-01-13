@@ -1,7 +1,9 @@
 <?php
 
-namespace Kedb\Template;
+namespace Kedb\Tests\Template;
 
+use Kedb\Template\Placeholder;
+use Kedb\Template\PlaceholderTemplate;
 
 class PlaceholderTemplateTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,9 @@
 <?php
-namespace Kedb\Spi\Postgresql;
+namespace Kedb\Tests\Spi\Postgresql;
 
 use Kedb\Connection;
 use Kedb\Query;
+use Kedb\Spi\Postgresql\PgConnection;
 use Kedb\Transaction;
 use Kedb\TransactionException;
 
@@ -20,7 +21,7 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped("The pgsql extension is not available.");
         }
 
-        $dbConfigFile = __DIR__ . '/../../../db.params.php';
+        $dbConfigFile = __DIR__ . '/../../db.params.php';
         if (!is_readable($dbConfigFile)) {
             $this->markTestSkipped("Database configuration file not found tests/db.params.php or is not readable");
         }

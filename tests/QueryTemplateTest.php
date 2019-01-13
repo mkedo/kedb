@@ -1,7 +1,8 @@
 <?php
-namespace Kedb;
+namespace Kedb\Tests;
 
-
+use Kedb\KedbException;
+use Kedb\QueryTemplate;
 use Kedb\Spi\Common\CmSqlFormatter;
 use Kedb\Spi\Fake\FakeSqlFormatter;
 

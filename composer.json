@@ -8,6 +8,11 @@
       "Kedb\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Kedb\\Tests\\": "tests/"
+    }
+  },
   "require-dev": {
     "phpunit/phpunit": "5.7.27"
   }

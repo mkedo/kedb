@@ -1,7 +1,8 @@
 <?php
-namespace Kedb\Spi\Fake;
+namespace Kedb\Tests\Spi\Fake;
 
 use Kedb\Spi\Common\CmSqlFormatter;
+use Kedb\Spi\Fake\FakeSqlFormatter;
 
 class FakeSqlFormatterTest extends \PHPUnit_Framework_TestCase
 {

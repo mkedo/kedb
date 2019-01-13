@@ -1,7 +1,7 @@
 <?php
-namespace Kedb;
+namespace Kedb\Tests;
 
-
+use Kedb\Query;
 use Kedb\Spi\Common\CmSqlFormatter;
 use Kedb\Spi\Fake\FakeSqlFormatter;
 
