@@ -43,4 +43,14 @@ class QueryTemplateTest extends \PHPUnit_Framework_TestCase
             'q' => ['?q', ['raw'], 'raw']
         ];
     }
+
+    public function testThrowUnknownPlaceholderType()
+    {
+        $formatter = new CmSqlFormatter(new FakeSqlFormatter());
+        $template = new QueryTemplate('?z');
+
+        $this->expectException(KedbException::class);
+
+        $template->fetch($formatter, ['abc']);
+    }
 }
