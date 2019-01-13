@@ -1,7 +1,6 @@
 <?php
 namespace Kedb;
 
-
 interface QueryResult
 {
     /**

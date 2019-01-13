@@ -2,7 +2,6 @@
 
 namespace Kedb\Spi\Common;
 
-
 use Kedb\QueryResult;
 use Kedb\Spi\SpiResult;
 

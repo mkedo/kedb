@@ -1,7 +1,6 @@
 <?php
 namespace Kedb;
 
-
 class Query implements Formattable
 {
     /**

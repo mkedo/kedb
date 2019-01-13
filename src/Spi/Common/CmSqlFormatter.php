@@ -35,7 +35,7 @@ class CmSqlFormatter implements SqlFormatter
             $result = $this->formatter->formatBool($value);
         } elseif (is_string($value)) {
             $result = $this->formatter->formatString($value);
-        } else if (is_resource($value)) {
+        } elseif (is_resource($value)) {
             if (get_resource_type($value) !== 'stream') {
                 throw new KedbException("Only stream resources are supported. " . get_resource_type($value) . " given");
             }

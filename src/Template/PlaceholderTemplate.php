@@ -43,7 +43,8 @@ class PlaceholderTemplate
      * @return string
      * @throws \Exception
      */
-    public function fetch(array $data) {
+    public function fetch(array $data)
+    {
         if ($this->templateVector === null) {
             $this->compile();
         }

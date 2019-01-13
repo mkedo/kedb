@@ -3,7 +3,6 @@
 
 namespace Kedb\Spi;
 
-
 interface SpiSqlFormatter
 {
     /**

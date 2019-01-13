@@ -14,4 +14,3 @@ class Binary implements PhFormatter
         return $formatter->quoteBinary($value);
     }
 }
-

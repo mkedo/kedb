@@ -66,7 +66,8 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase
             $row = $query->exec($this->pg)->row();
 
             $this->assertTrue(!empty($row));
-            $exceptedSql = 'SELECT NULL n, 123 i, 1.23 f, true bt, false bf, \'string\' str, \'\x010203\'::bytea bin, 1 "ident"';
+            $exceptedSql = 'SELECT '
+                .'NULL n, 123 i, 1.23 f, true bt, false bf, \'string\' str, \'\x010203\'::bytea bin, 1 "ident"';
             $this->assertSame($exceptedSql, $actualSql);
             $this->assertSame($row['n'], $data['n']);
             $this->assertTrue($row['i'] == $data['i']);
@@ -75,7 +76,6 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($row['bf'], $data['bf']);
             $this->assertSame($row['str'], $data['str']);
             $this->assertSame($row['bin'], $bin);
-
         } finally {
             fclose($fp);
         }
@@ -100,14 +100,15 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase
         }
 
 
-        $query = new Query("WITH result AS ("
-            ."SELECT * FROM (VALUES (1, 'one'), (2, 'two'), (3, 'three')) AS t (id, name)"
+        $query = new Query(
+            "WITH result AS ("
+                ."SELECT * FROM (VALUES (1, 'one'), (2, 'two'), (3, 'three')) AS t (id, name)"
             .") "
             ." SELECT ?t:id, ?t:name FROM result ORDER by id ASC",
-        [
-            'id' => ["result", "id"],
-            'name' => ["result", "name"],
-        ]
+            [
+                'id' => ["result", "id"],
+                'name' => ["result", "name"],
+            ]
         );
 
         $result = $query->exec($this->pg);
@@ -186,13 +187,14 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase
         try {
             $txn->commit();
             $this->fail("Should not execute since there is no transaction in progress");
-        } catch (TransactionException $e) {}
+        } catch (TransactionException $e) {
+        }
 
         try {
             $txn->rollback();
             $this->fail("Should not execute since there is no transaction in progress");
-        } catch (TransactionException $e) {}
-
+        } catch (TransactionException $e) {
+        }
     }
 
     public function testTxnLevel()
@@ -203,12 +205,14 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase
         try {
             $txn->begin(Transaction::SERIALIZABLE);
             $this->fail("Should not raise isolation level");
-        } catch (TransactionException $e) {}
+        } catch (TransactionException $e) {
+        }
 
         try {
             $txn->begin(12345678);
             $this->fail("Should not start with unknown isolation level");
-        } catch (TransactionException $e) {}
+        } catch (TransactionException $e) {
+        }
 
         $txn->rollback();
     }

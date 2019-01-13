@@ -48,7 +48,7 @@ class FakeSqlFormatter implements \Kedb\Spi\SpiSqlFormatter
      */
     public function formatBool($value)
     {
-       return $value ? 'true' : 'false';
+        return $value ? 'true' : 'false';
     }
 
     /**
@@ -76,14 +76,14 @@ class FakeSqlFormatter implements \Kedb\Spi\SpiSqlFormatter
             $hexstr = '';
         } else {
             $hexstr = '\\x' . implode(
-                    '',
-                    array_map(
-                        function ($chr) {
+                '',
+                array_map(
+                    function ($chr) {
                             return str_pad(dechex(ord($chr)), 2, '0', STR_PAD_LEFT);
-                        },
-                        str_split($binary)
-                    )
-                );
+                    },
+                    str_split($binary)
+                )
+            );
         }
         return sprintf("'%s'::bytea", $hexstr);
     }
